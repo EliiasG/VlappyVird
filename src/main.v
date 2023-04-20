@@ -4,15 +4,17 @@ import gamesim
 import gamesim.rendering
 import gg
 import gx
+import math.fractions
 
 [heap]
 struct MainState {
 mut:
-	sim      gamesim.GameSimulation
-	ctx      &gg.Context = unsafe { nil }
-	old_flap bool
-	dead     bool = true
-	rend     rendering.Renderer
+	sim        gamesim.GameSimulation
+	ctx        &gg.Context = unsafe { nil }
+	old_flap   bool
+	dead       bool = true
+	col_rend   rendering.Renderer
+	score_rend rendering.Renderer
 }
 
 fn main() {
@@ -21,13 +23,16 @@ fn main() {
 	}
 	state.ctx = gg.new_context(
 		bg_color: gx.rgb(174, 198, 255)
+		create_window: true
 		width: gamesim.width
 		height: gamesim.height
-		window_title: 'Set Pixels'
+		window_title: 'V FlappyBird'
+		// font_path: 'assets/SquaresBold.otff'
 		frame_fn: frame
 		user_data: state
 	)
-	state.rend = rendering.new_collider_renderer(state.ctx)
+	state.col_rend = rendering.new_collider_renderer(state.ctx)
+	state.score_rend = rendering.new_score_renderer(state.ctx)
 	state.ctx.run()
 }
 
@@ -46,8 +51,10 @@ fn frame(mut state MainState) {
 	}
 
 	// render game
-	state.rend.render(state.sim)
+	state.col_rend.render(state.sim)
+	state.score_rend.render(state.sim)
 
+	// paused when dead
 	if state.dead {
 		if flap {
 			state.sim = gamesim.new_sim()

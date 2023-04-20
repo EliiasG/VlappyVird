@@ -21,8 +21,11 @@ pub fn (mut b Bird) flap() {
 }
 
 pub fn (mut b Bird) update() {
+	// apply velocity
 	b.y += b.velocity
+	// apply gravity
 	b.velocity += bird.gravity
+	// apply drag
 	b.velocity *= 1 - bird.drag
 }
 
